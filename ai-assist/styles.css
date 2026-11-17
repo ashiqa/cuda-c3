@@ -43,6 +43,9 @@ h2 { font-size: 17px; margin: 0; font-weight: 500; }
 .assistant-heading p { font-size: 11px; color: var(--muted); margin: 5px 0 0; }
 .local { margin-left: auto; color: var(--cream); font-size: 8px; letter-spacing: 1px; background: var(--sienna); border-radius: 5px; padding: 7px; }
 .input-wrap { display: flex; gap: 6px; background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 8px; }
+.input-wrap:focus-within { outline: 3px solid var(--rust); outline-offset: 4px; }
+.input-wrap input:focus { outline: none; box-shadow: none; }
+.input-wrap #submit:focus-visible { outline-offset: 1px; }
 input { width: 100%; min-width: 0; background: none; border: none; color: var(--ink); padding: 8px 12px; font-size: 14px; }
 input::placeholder { color: var(--muted); opacity: 1; }
 #submit { width: 44px; min-height: 44px; flex-shrink: 0; border: 1px solid var(--sienna); border-radius: 8px; background: var(--sienna); color: var(--cream); font-size: 24px; }
@@ -104,5 +107,6 @@ footer span { font-size: 10px; }
 }
 @media(forced-colors: active) {
   .map-pin, .block { border: 2px solid CanvasText; }
+  .input-wrap:focus-within { outline-color: Highlight; }
   :where(button, a, input):focus-visible { outline-color: Highlight; }
 }
