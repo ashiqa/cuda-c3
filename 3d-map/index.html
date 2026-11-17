@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CMU Campus Pulse 3D map and unified discovery pins." />
+    <title>Campus Pulse — 3D Map & Pins</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="map-shell" aria-label="Interactive 3D map of Carnegie Mellon University">
+        <svg id="campusMap" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="mapTitle mapDesc">
+          <title id="mapTitle">Carnegie Mellon 3D campus map</title>
+          <desc id="mapDesc">A stylized 3D map using OpenStreetMap-derived building footprints, with food, event, bathroom, and printer pins.</desc>
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0d2033" />
+              <stop offset="0.46" stop-color="#091726" />
+              <stop offset="1" stop-color="#040b14" />
+            </linearGradient>
+            <radialGradient id="horizon" cx="50%" cy="18%" r="78%">
+              <stop offset="0" stop-color="#2b6c77" stop-opacity=".24" />
+              <stop offset=".48" stop-color="#132b3b" stop-opacity=".08" />
+              <stop offset="1" stop-color="#030911" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#18352f" />
+              <stop offset="1" stop-color="#0a211f" />
+            </linearGradient>
+            <linearGradient id="waterSheen" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#b6e6e3" stop-opacity=".05" />
+              <stop offset=".5" stop-color="#80c5c5" stop-opacity=".18" />
+              <stop offset="1" stop-color="#d7f7ed" stop-opacity=".02" />
+            </linearGradient>
+            <linearGradient id="routeGlow" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#55ead4" />
+              <stop offset=".55" stop-color="#9effef" />
+              <stop offset="1" stop-color="#ffba68" />
+            </linearGradient>
+            <pattern id="mapGrid" width="54" height="54" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
+              <path d="M54 0H0V54" fill="none" stroke="#bde3e0" stroke-opacity=".025" />
+            </pattern>
+            <filter id="shadow" x="-80%" y="-80%" width="260%" height="300%">
+              <feDropShadow dx="8" dy="15" stdDeviation="10" flood-color="#02060c" flood-opacity=".72" />
+            </filter>
+            <filter id="glow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="7" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="haloBlur" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="20" />
+            </filter>
+            <clipPath id="mapClip"><rect width="1200" height="760" rx="34" /></clipPath>
+          </defs>
+
+          <g clip-path="url(#mapClip)">
+            <rect width="1200" height="760" fill="url(#sky)" />
+            <rect width="1200" height="760" fill="url(#horizon)" />
+            <rect width="1200" height="760" fill="url(#mapGrid)" />
+            <g id="cameraGroup" class="camera-group">
+              <path class="campus-ground" d="M41 190 848 28l326 341-674 368L28 523Z" />
+              <path class="ground-sheen" d="M41 190 848 28l326 341-674 368L28 523Z" />
+              <g class="map-roads" aria-hidden="true">
+                <path d="M30 528C234 468 342 485 515 411S847 217 1155 195" />
+                <path d="M163 721C306 603 499 543 681 513s291-86 440-199" />
+                <path d="M393 31c25 147 79 264 213 362s226 184 286 350" />
+                <path class="minor" d="M82 275c168 47 308 101 423 224s206 171 343 221" />
+                <path class="minor" d="M690 55c-12 158-77 273-209 374S275 612 232 748" />
+              </g>
+              <g id="crowdGlowLayer" aria-hidden="true"></g>
+              <g id="buildingLayer"></g>
+              <g id="routeLayer"></g>
+              <g id="labelLayer"></g>
+              <g id="pinLayer"></g>
+              <g id="indoorLayer" class="indoor-layer"></g>
+            </g>
+            <g id="rainLayer" aria-hidden="true"></g>
+            <rect width="1200" height="760" fill="url(#horizon)" opacity=".35" pointer-events="none" />
+          </g>
+        </svg>
+
+        <header class="topbar glass">
+          <a class="brand" href="#" aria-label="Campus Pulse home">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span><strong>Campus Pulse</strong><small>Explore CMU</small></span>
+          </a>
+
+          <form class="search" id="searchForm" role="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+            <input id="searchInput" type="search" autocomplete="off" placeholder="Search buildings, rooms, food, events…" aria-label="Search campus" />
+            <kbd>⌘ K</kbd>
+            <div class="search-results glass" id="searchResults" hidden></div>
+          </form>
+
+          <div class="top-actions">
+            <div class="data-badge"><span></span><strong>Map live</strong><small>OSM + demo pins</small></div>
+            <button class="round-button" id="rainButton" type="button" aria-pressed="false" aria-label="Toggle rain scenario">
+              <svg viewBox="0 0 24 24"><path d="M7 17h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 6.1 8.3 4.5 4.5 0 0 0 7 17Z" /><path d="m9 19-1 2m5-2-1 2m5-2-1 2" /></svg>
+            </button>
+            <button class="profile-button" type="button" aria-label="Profile">AP</button>
+          </div>
+        </header>
+
+        <aside class="layers-panel glass" id="layersPanel">
+          <div class="panel-heading"><span>DISCOVER</span><button id="collapseLayers" type="button" aria-label="Collapse layers">−</button></div>
+          <div class="layer-buttons" id="layerButtons">
+            <button type="button" data-layer="food" aria-pressed="true"><span class="layer-icon food">✦</span><span>Free food<small id="foodCount">2 live</small></span><i></i></button>
+            <button type="button" data-layer="event" aria-pressed="true"><span class="layer-icon event">◈</span><span>Events<small>2 today</small></span><i></i></button>
+            <button type="button" data-layer="bathroom" aria-pressed="true"><span class="layer-icon bathroom">●</span><span>Bathrooms<small>Step-free noted</small></span><i></i></button>
+            <button type="button" data-layer="printer" aria-pressed="true"><span class="layer-icon printer">▣</span><span>Printers<small>Colour + B&amp;W</small></span><i></i></button>
+          </div>
+          <div class="layer-divider"></div>
+          <button class="map-toggle" id="crowdToggle" type="button" aria-pressed="true"><span class="toggle-mark crowd"></span><span>Crowd glow<small>Simulated · updates live</small></span><i></i></button>
+          <button class="map-toggle" id="routeToggle" type="button" aria-pressed="true"><span class="toggle-mark route"></span><span>Active route<small id="routeStatus">No destination yet</small></span><i></i></button>
+          <div class="provenance"><svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-6v-4m0-4h.01" /></svg><span>Building footprints: © OpenStreetMap contributors. Pins marked Demo data are synthetic.</span></div>
+        </aside>
+
+        <nav class="camera-presets glass" aria-label="Map camera presets">
+          <span>CAMERA</span>
+          <button type="button" data-camera="overview" class="active">Overview</button>
+          <button type="button" data-camera="wean">Wean · Sorrells</button>
+          <button type="button" data-camera="hunt">Hunt</button>
+        </nav>
+
+        <div class="map-controls glass" aria-label="Map controls">
+          <button type="button" id="zoomIn" aria-label="Zoom in">+</button>
+          <button type="button" id="zoomOut" aria-label="Zoom out">−</button>
+          <span></span>
+          <button type="button" id="resetCamera" aria-label="Reset map orientation">
+            <svg viewBox="0 0 24 24"><path d="M12 2 8 12l4-2 4 2-4-10Zm0 8v12" /></svg>
+          </button>
+        </div>
+
+        <div class="compass glass"><strong>N</strong><i></i></div>
+
+        <article class="detail-card glass" id="detailCard" aria-live="polite" aria-hidden="true">
+          <button class="card-close" id="closeCard" type="button" aria-label="Close details">×</button>
+          <div class="gallery" id="gallery" hidden>
+            <div class="gallery-main" id="galleryMain"></div>
+            <div class="gallery-thumbs" id="galleryThumbs"></div>
+            <span class="gallery-count" id="galleryCount">1 / 3</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta"><span class="card-kind" id="cardKind">BUILDING</span><span class="demo-chip" id="demoChip">OSM FOOTPRINT</span></div>
+            <h1 id="cardTitle">Wean Hall</h1>
+            <p class="card-subtitle" id="cardSubtitle">Academic building · Carnegie Mellon</p>
+            <div class="card-stats" id="cardStats"></div>
+            <p class="card-description" id="cardDescription"></p>
+            <div class="card-actions">
+              <button class="primary-action" id="navigateButton" type="button">
+                <svg viewBox="0 0 24 24"><path d="m3 11 18-8-8 18-2-8-8-2Z" /></svg>
+                Navigate here
+              </button>
+              <button class="secondary-action" id="indoorButton" type="button">Explore floors</button>
+            </div>
+          </div>
+        </article>
+
+        <section class="indoor-toolbar glass" id="indoorToolbar" aria-hidden="true">
+          <button id="exitIndoor" type="button" aria-label="Exit indoor view">←</button>
+          <div><span>INDOOR PREVIEW</span><strong id="indoorBuilding">Wean Hall</strong></div>
+          <div class="floor-picker" id="floorPicker"></div>
+          <div class="indoor-provenance"><span>DEMO GEOMETRY</span><small>Blueprint source pending</small></div>
+        </section>
+
+        <div class="map-caption glass">
+          <span class="pulse-dot"></span>
+          <div><strong id="captionTitle">Campus overview</strong><small id="captionCopy">Select a building or pin to explore</small></div>
+        </div>
+
+        <div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
