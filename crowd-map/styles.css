@@ -392,7 +392,7 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
-.map-stage .map-kicker { color: var(--sand); }
+.map-stage .map-kicker { color: var(--sienna); }
 
 .live-chip,
 .confidence-chip {
@@ -627,7 +627,7 @@ a:focus-visible {
   overflow: hidden;
   border: 1px solid rgba(202, 228, 240, 0.09);
   border-radius: var(--radius-lg);
-  background: var(--ink);
+  background: var(--paper);
   box-shadow: var(--shadow);
 }
 
@@ -658,7 +658,7 @@ a:focus-visible {
   font: 600 22px/1.1 "Manrope", sans-serif;
   letter-spacing: -0.04em;
   text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
-  color: var(--cream);
+  color: var(--ink);
 }
 
 .view-chip {
@@ -668,8 +668,8 @@ a:focus-visible {
   padding: 8px 11px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  color: var(--cream);
-  background: rgba(43, 33, 24, 0.78);
+  color: var(--ink);
+  background: rgba(255, 253, 247, 0.92);
   font-size: 8px;
   backdrop-filter: blur(12px);
 }
@@ -695,18 +695,18 @@ a:focus-visible {
 }
 
 .lawn {
-  fill: #68432d;
-  stroke: rgba(245, 245, 220, 0.16);
+  fill: #f8e7d2;
+  stroke: rgba(160, 82, 45, 0.15);
   stroke-width: 2;
 }
 
-.lawn-one { fill: #62402d; }
-.lawn-two { fill: #593a29; }
-.lawn-three { fill: #4f3325; }
+.lawn-one { fill: #f8e8d5; }
+.lawn-two { fill: #f5dfc8; }
+.lawn-three { fill: #f9eddc; }
 
 .campus-path {
   fill: none;
-  stroke: #775947;
+  stroke: #eadfd5;
   stroke-linecap: round;
   stroke-width: 58;
 }
@@ -748,7 +748,7 @@ a:focus-visible {
 
 .building .window-line {
   fill: none;
-  stroke: rgba(255, 241, 190, 0.55);
+  stroke: rgba(143, 50, 30, 0.45);
   stroke-dasharray: 7 7;
   stroke-width: 2;
   pointer-events: none;
@@ -776,16 +776,16 @@ a:focus-visible {
 }
 
 .map-label text {
-  fill: #e9f0ed;
+  fill: var(--ink);
   font: 600 17px "DM Sans", sans-serif;
   paint-order: stroke;
-  stroke: rgba(3, 9, 18, .76);
+  stroke: rgba(255, 253, 247, .95);
   stroke-width: 6;
   stroke-linejoin: round;
 }
 
 .map-label .label-sub {
-  fill: #a8b9c1;
+  fill: var(--muted);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: .08em;
@@ -816,8 +816,8 @@ a:focus-visible {
 
 .raining .rain-drop { opacity: .25; }
 
-.raining .lawn { filter: brightness(.67) saturate(.75); }
-.raining .campus-path { stroke: #152b3b; }
+.raining .lawn { filter: brightness(.96) saturate(.72); }
+.raining .campus-path { stroke: #d8d4d0; }
 
 .compass {
   position: absolute;
@@ -831,7 +831,7 @@ a:focus-visible {
   border: 1px solid var(--line);
   border-radius: 50%;
   color: var(--muted-strong);
-  background: rgba(5, 14, 24, .72);
+  background: rgba(255, 253, 247, .92);
   font: 700 9px "Manrope", sans-serif;
   backdrop-filter: blur(12px);
 }

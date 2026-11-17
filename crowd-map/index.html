@@ -134,30 +134,30 @@
               <desc id="mapDescription">An isometric campus visualization showing synthetic occupancy levels for campus buildings and outdoor spaces.</desc>
               <defs>
                 <linearGradient id="mapGround" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#4a3025" />
-                  <stop offset="1" stop-color="#211710" />
+                  <stop offset="0" stop-color="#ffffff" />
+                  <stop offset="1" stop-color="#fff8ed" />
                 </linearGradient>
                 <linearGradient id="roadGlow" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#a0522d" stop-opacity=".18" />
-                  <stop offset=".5" stop-color="#f5f5dc" stop-opacity=".38" />
-                  <stop offset="1" stop-color="#e35336" stop-opacity=".13" />
+                  <stop offset="0" stop-color="#a0522d" stop-opacity=".08" />
+                  <stop offset=".5" stop-color="#a0522d" stop-opacity=".24" />
+                  <stop offset="1" stop-color="#e35336" stop-opacity=".07" />
                 </linearGradient>
                 <radialGradient id="vignette">
-                  <stop offset="55%" stop-color="#2b2118" stop-opacity="0" />
-                  <stop offset="100%" stop-color="#17100b" stop-opacity=".78" />
+                  <stop offset="55%" stop-color="#fffdf7" stop-opacity="0" />
+                  <stop offset="100%" stop-color="#f4a460" stop-opacity=".12" />
                 </radialGradient>
                 <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
                   <feGaussianBlur stdDeviation="18" />
                 </filter>
                 <filter id="buildingShadow" x="-60%" y="-60%" width="220%" height="240%">
-                  <feDropShadow dx="8" dy="16" stdDeviation="12" flood-color="#000711" flood-opacity=".62" />
+                  <feDropShadow dx="8" dy="16" stdDeviation="12" flood-color="#a0522d" flood-opacity=".2" />
                 </filter>
                 <filter id="pinGlow" x="-100%" y="-100%" width="300%" height="300%">
                   <feGaussianBlur stdDeviation="6" result="blur" />
                   <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                 </filter>
                 <pattern id="gridPattern" width="42" height="42" patternUnits="userSpaceOnUse" patternTransform="skewY(-20)">
-                  <path d="M42 0H0V42" fill="none" stroke="#a7c4d3" stroke-opacity=".035" stroke-width="1" />
+                  <path d="M42 0H0V42" fill="none" stroke="#a0522d" stroke-opacity=".05" stroke-width="1" />
                 </pattern>
               </defs>
 

@@ -2,22 +2,29 @@ const { buildings, pins, indoorDemo, bounds } = window.CAMPUS_DATA;
 const svgNS = "http://www.w3.org/2000/svg";
 
 const COLORS = {
-  food: "#ffb45f",
-  event: "#ee75cb",
-  bathroom: "#67dced",
-  printer: "#a790ff",
+  food: "#F4A460",
+  event: "#E35336",
+  bathroom: "#FFFDF7",
+  printer: "#A0522D",
 };
 
 const ICONS = {
   food: "✦",
   event: "◈",
-  bathroom: "●",
-  printer: "▣",
+  bathroom: "WC",
+  printer: "PRINT",
 };
 
 const PHOTO_ASSETS = {
   food: "./assets/free-food-pin.jpg",
   event: "./assets/student-event-pin.jpg",
+};
+
+const PIN_VISUAL_OFFSETS = {
+  "printer-wean": [-28, 8],
+  "printer-hunt": [-27, 8],
+  "bathroom-hunt": [24, 1],
+  "bathroom-cohon": [28, 2],
 };
 
 const state = {
@@ -127,8 +134,8 @@ function renderBuildings() {
         class: "building-side",
         points: polygonString([point, geometry.base[next], geometry.top[next], geometry.top[edgeIndex]]),
       });
-      const edgeShade = 19 + Math.round((edgeIndex / geometry.base.length) * 10);
-      side.style.fill = `hsl(20 38% ${edgeShade}%)`;
+      const edgeShade = 65 + Math.round((edgeIndex / geometry.base.length) * 10);
+      side.style.fill = `hsl(20 58% ${edgeShade}%)`;
       group.appendChild(side);
     });
 
@@ -172,7 +179,8 @@ function renderBuildings() {
 function pinPosition(pin) {
   const building = buildingFor(pin.buildingId);
   const [x, y] = project(pin.coordinates);
-  return [x, y - (building ? heightPixels(building) : 24) - 9];
+  const [offsetX, offsetY] = PIN_VISUAL_OFFSETS[pin.id] || [0, 0];
+  return [x + offsetX, y - (building ? heightPixels(building) : 24) - 9 + offsetY];
 }
 
 function pinSubtitle(pin) {
@@ -199,7 +207,7 @@ function renderPins() {
     const hasPhoto = Boolean(PHOTO_ASSETS[pin.kind]);
     const group = svg("g", {
       id: `pin-${pin.id}`,
-      class: `pin${hasPhoto ? " photo-pin" : ""}`,
+      class: `pin ${pin.kind}${hasPhoto ? " photo-pin" : ""}`,
       role: "button",
       tabindex: "0",
       transform: `translate(${x} ${y})`,
@@ -230,9 +238,21 @@ function renderPins() {
       group.appendChild(badge);
     } else {
       group.appendChild(svg("circle", { class: "pin-ring", cx: 0, cy: 0, r: 14, fill: color }));
-      const icon = svg("text", { class: "pin-core", x: 0, y: 1 });
-      icon.textContent = ICONS[pin.kind];
-      group.appendChild(icon);
+      const glyph = svg("g", { class: `pin-glyph ${pin.kind}`, "aria-hidden": "true" });
+      if (pin.kind === "bathroom") {
+        glyph.append(
+          svg("circle", { cx: -4.5, cy: -5.5, r: 2 }),
+          svg("circle", { cx: 4.5, cy: -5.5, r: 2 }),
+          svg("path", { d: "M-4.5-2v8M-8 1h7M4.5-2v8M1 1h7M0-8v15" }),
+        );
+      } else {
+        glyph.append(
+          svg("rect", { x: -7, y: -2, width: 14, height: 8, rx: 2 }),
+          svg("path", { d: "M-5-2v-6H5v6M-5 3h10v7H-5z" }),
+          svg("circle", { class: "printer-status", cx: 4.2, cy: 1, r: 1 }),
+        );
+      }
+      group.appendChild(glyph);
     }
 
     const labelWidth = Math.max(84, Math.min(132, pin.name.length * 5.4));
