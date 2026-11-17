@@ -43,7 +43,7 @@ small-text button background. Sienna on sand is only 2.76:1, so sand surfaces us
 ink text. Avoid substituting these pairings without checking contrast.
 
 Keyboard users get a 3px focus outline. Suggestion and submit buttons have a minimum
-44px height. Links are underlined, demo data has a written label, and status/results
+44px height. Links are underlined, categories and locations have written labels, and status/results
 are communicated as text rather than color alone. Forced-colors mode uses system
 focus colors. These checks cover palette choices, not a full accessibility audit;
 visual browser and assistive-technology QA are still needed.
@@ -60,6 +60,6 @@ they do not establish real locations, schedules, hours, or accessibility.
 Try “robotics events”, “bathroom near Gates floor 3”, “colour printer near Hunt”,
 “food near Tepper”, and “a quiet place to study”.
 
-The standalone assistant uses these fixtures by default. Pass `context.pins` to
+The standalone assistant reads shared map listings and adds study fixtures. The query module uses all 20 fixtures when no pins are injected. Pass `context.pins` to
 `askAssistant` to replace them with the map owner's canonical dataset. See the
 [integration README](./README.md) for the complete interface.

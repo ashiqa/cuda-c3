@@ -3,12 +3,16 @@
 Serve the repository root with `python3 -m http.server 4173`, then visit `/ai-assist/`.
 No build step, API key, or backend is required. External fonts are optional; system fonts work offline.
 
-The default demo includes 20 synthetic listings in `demo-data.mjs`. See the
+The standalone page reads campus listings from `../3d-map/data.js` and adds study
+spaces from `demo-data.mjs`. The query module falls back to 20 synthetic listings
+when used without injected pins. Provenance remains in the data rather than being
+repeated in each answer or card. See the
 [colors and demo-data README](./README-colors.md) for the warm palette, supporting
 colors, measured contrast ratios, and fixture details.
 
-`node --test ai-assist/assistant.test.mjs` checks the five demo intents, action payloads,
-exact floor matching, provider failures, and canonical-data injection.
+`node --test ai-assist/assistant.test.mjs` runs 20 checks covering natural-language
+variants, location follow-ups, route origin follow-ups, action payloads, exact floor
+matching, provider failures, and the canonical map dataset.
 
 ## Integration
 
@@ -23,11 +27,14 @@ Context accepts:
   `buildingId`, optional `floor`, `tags`, `details`, `occupancy`, `dataStatus`.
 - `origin`: navigation provider's starting point. Missing origins trigger clarification.
 - `rain`: current scenario boolean.
+- `previousQuery`: previous user text, used to carry a service into a location follow-up.
+- `pendingDestination`, `pendingMode`: preserve a route while asking for its origin.
 - `route(from, destination, {mode, stepFree})`: async route provider. Must enforce
   verified accessibility if `stepFree` is requested; null/rejection produces a retry message.
 - `getCrowd(buildingId)`: optional async provider returning `{occupancy}` in percent 0–100.
 
-The standalone page reads `window.campusAssistantContext` for every request and emits
+The standalone page reads `window.campusAssistantContext` for every request (overriding
+its campus pins and conversation defaults) and emits
 `window` CustomEvent `campus-pulse:assistant-actions` with the entire answer as `detail`.
 It only previews actions; a host must subscribe and execute them. This event does not
 cross iframe boundaries. For a combined app, import the module directly.

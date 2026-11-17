@@ -1,7 +1,10 @@
-import { askAssistant } from './assistant.mjs';
+import { askAssistant, demoPins } from './assistant.mjs';
 const el = id => document.getElementById(id);
 const form = el('askForm');
 let busy = false;
+let previousQuery = '';
+let pendingDestination = null;
+let pendingMode = 'fast';
 
 function element(tag, className, content) {
   const node = document.createElement(tag);
@@ -18,15 +21,22 @@ async function ask(query) {
   el('response').setAttribute('aria-busy', 'true');
   el('response').replaceChildren(element('p', 'thinking', 'Finding your next stop…'));
   try {
-    const context = window.campusAssistantContext || {};
-    el('connection').textContent = context.pins ? 'Campus data connected · map actions available' : 'Standalone preview · map not connected';
+    const campusPins = window.CAMPUS_DATA?.pins;
+    const context = {
+      pins: campusPins ? [...campusPins, ...demoPins.filter(pin => pin.kind === 'study')] : demoPins,
+      previousQuery, pendingDestination, pendingMode,
+      ...window.campusAssistantContext,
+    };
     const answer = await askAssistant(query, context);
+    previousQuery = query;
+    pendingDestination = answer.needsOrigin ? answer.destination : null;
+    pendingMode = answer.mode || 'fast';
     const response = el('response');
     response.replaceChildren(element('div', 'answer-label', '✳ CAMPUS PULSE'), element('p', 'answer', answer.text));
     const cards = element('div', 'result-grid');
     answer.results.forEach(pin => {
       const card = element('article', 'result-card');
-      card.append(element('span', 'pin-kind', `${pin.kind} · ${pin.dataStatus === 'verified' ? 'Verified' : 'Demo data'}`), element('h3', '', pin.name), element('p', '', pin.details));
+      card.append(element('span', 'pin-kind', `${pin.kind} · ${pin.buildingId}${pin.floor !== undefined ? ` · Floor ${pin.floor}` : ''}`), element('h3', '', pin.name), element('p', '', pin.details));
       cards.append(card);
     });
     response.append(cards);
