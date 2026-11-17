@@ -402,8 +402,49 @@ function toggleLayer(kind) {
   pins.filter((pin) => pin.kind === kind).forEach((pin) => byId(`pin-${pin.id}`).classList.toggle("hidden", !state.visibleLayers.has(kind)));
 }
 
+function setLayerVisibility(kind, visible) {
+  if (!COLORS[kind]) return;
+  const isVisible = state.visibleLayers.has(kind);
+  if (isVisible !== visible) toggleLayer(kind);
+}
+
+function highlightPins(pinIds = []) {
+  clearSelection();
+  const validPins = pinIds.map(pinFor).filter(Boolean);
+  validPins.forEach((pin) => {
+    setLayerVisibility(pin.kind, true);
+    byId(`pin-${pin.id}`).classList.add("selected");
+  });
+  if (validPins[0]) {
+    focusCoordinate(validPins[0].coordinates, 1.34);
+    updateCaption(`${validPins.length} result${validPins.length === 1 ? "" : "s"} highlighted`, "Assistant moved the map");
+  }
+}
+
+function executeAssistantActions(answer = {}) {
+  const actions = Array.isArray(answer.actions) ? answer.actions : [];
+  actions.forEach((action) => {
+    const payload = action.payload || {};
+    if (action.type === "fly_to" && buildingFor(payload.buildingId)) {
+      selectBuilding(payload.buildingId);
+    }
+    if (action.type === "highlight") highlightPins(payload.pinIds);
+    if (action.type === "open_pin" && pinFor(payload.pinId)) selectPin(payload.pinId);
+    if (action.type === "set_layer") setLayerVisibility(payload.layer, payload.visible !== false);
+    if (action.type === "set_scenario" && typeof payload.rain === "boolean" && payload.rain !== state.raining) toggleRain();
+    if (action.type === "draw_route") {
+      const destination = payload.route?.destination || payload.destination || {};
+      if (destination.pinId && pinFor(destination.pinId)) navigateTo("pin", destination.pinId);
+      else if (destination.buildingId && buildingFor(destination.buildingId)) navigateTo("building", destination.buildingId);
+      else if (Array.isArray(destination.coordinates)) drawRoute(destination.coordinates);
+    }
+  });
+  if (actions.length) showToast(`Assistant applied ${actions.length} map action${actions.length === 1 ? "" : "s"}`);
+}
+
 function toggleRain() {
   state.raining = !state.raining;
+  if (window.campusAssistantContext) window.campusAssistantContext.rain = state.raining;
   document.body.classList.toggle("raining", state.raining);
   byId("rainButton").setAttribute("aria-pressed", String(state.raining));
   showToast(state.raining ? "Rain scenario on · paths darkened, indoor pins stay visible" : "Rain scenario off · dry campus view restored");
@@ -681,9 +722,15 @@ function bindEvents() {
       else closeCard();
     }
   });
+  window.addEventListener("campus-pulse:assistant-actions", (event) => executeAssistantActions(event.detail));
 }
 
 function initialize() {
+  window.campusAssistantContext = {
+    ...(window.campusAssistantContext || {}),
+    pins,
+    rain: state.raining,
+  };
   renderBuildings();
   renderPins();
   renderRain();

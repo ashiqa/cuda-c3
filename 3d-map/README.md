@@ -21,6 +21,10 @@ window.addEventListener("campus-pulse:navigate", ({ detail }) => {
 
 Indoor room events currently use `dataStatus: "demo"`. Replace the geometry in `data.js` with validated blueprint-derived exports before changing that provenance.
 
+The page exposes the canonical `pins` through `window.campusAssistantContext` and listens
+for the assistant's `campus-pulse:assistant-actions` event. Supported action types are
+`fly_to`, `highlight`, `open_pin`, `set_layer`, `set_scenario`, and `draw_route`.
+
 ## Visual QA routes
 
 - `/3d-map/` — campus overview
