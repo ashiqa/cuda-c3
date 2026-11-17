@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A polished simulated crowd map for CMU Campus Pulse."
+    />
+    <title>Campus Pulse — Simulated Crowd Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <main class="app-shell">
+      <header class="topbar glass-panel">
+        <a class="brand" href="#" aria-label="Campus Pulse home">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          <span>
+            <strong>Campus Pulse</strong>
+            <small>Carnegie Mellon University</small>
+          </span>
+        </a>
+
+        <div class="data-disclosure" role="status">
+          <span class="status-dot"></span>
+          <span><strong>Simulation live</strong> · Synthetic demo data</span>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-button" id="pauseButton" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 6v12M16 6v12" />
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button class="weather-toggle" id="rainToggle" type="button" aria-pressed="false">
+            <span class="toggle-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 17h10a4 4 0 0 0 .4-7.98A6 6 0 0 0 6.1 8.3 4.5 4.5 0 0 0 7 17Z" />
+                <path class="rain-lines" d="m9 19-1 2m5-2-1 2m5-2-1 2" />
+              </svg>
+            </span>
+            <span>
+              <small>Scenario</small>
+              <strong id="weatherLabel">Dry evening</strong>
+            </span>
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <aside class="control-panel glass-panel">
+          <div class="eyebrow-row">
+            <span class="eyebrow">Crowd intelligence</span>
+            <span class="live-chip">LIVE MODEL</span>
+          </div>
+          <h1>Find your<br /><em>space.</em></h1>
+          <p class="intro-copy">
+            Explore simulated activity across campus and spot a calmer place before you arrive.
+          </p>
+
+          <div class="metric-grid" aria-label="Campus crowd summary">
+            <article>
+              <span class="metric-icon occupancy-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8.5 1a3 3 0 0 0 0-6m3 15v-2a4 4 0 0 0-3-3.87" /></svg>
+              </span>
+              <div><strong id="campusOccupancy">68%</strong><small>Campus activity</small></div>
+            </article>
+            <article>
+              <span class="metric-icon calm-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M20.8 4.6c-5.1-.4-9.3 1.2-11.9 4.4-2.1 2.7-2.3 6-2.3 8.2m14.2-12.6c.6 5.3-1.2 9.6-4.5 12.1-2.7 2-6 2-9.7.5m14.2-12.6L5 20" /></svg>
+              </span>
+              <div><strong id="calmSpaces">3</strong><small>Calm spaces</small></div>
+            </article>
+          </div>
+
+          <div class="control-section">
+            <div class="section-heading">
+              <span>Simulation moment</span>
+              <button class="text-button" id="resetButton" type="button">Reset</button>
+            </div>
+            <div class="scenario-picker" role="group" aria-label="Simulation moment">
+              <button type="button" data-scenario="steady" class="active">
+                <span>Now</span><small>Steady flow</small>
+              </button>
+              <button type="button" data-scenario="class">
+                <span>2:20</span><small>Class change</small>
+              </button>
+              <button type="button" data-scenario="lunch">
+                <span>12:15</span><small>Lunch peak</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="control-section">
+            <div class="section-heading"><span>Show activity</span></div>
+            <div class="filter-list" role="group" aria-label="Filter crowd levels">
+              <button type="button" data-filter="all" class="active"><span class="filter-dot spectrum"></span>All zones</button>
+              <button type="button" data-filter="calm"><span class="filter-dot calm"></span>Calm</button>
+              <button type="button" data-filter="busy"><span class="filter-dot busy"></span>Busy</button>
+            </div>
+          </div>
+
+          <div class="model-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-6v-4m0-4h.01" /></svg>
+            <p><strong>No live location tracking.</strong> Occupancy is generated from deterministic class, weather, and event patterns.</p>
+          </div>
+        </aside>
+
+        <section class="map-stage" aria-label="Interactive simulated campus crowd map">
+          <div class="map-topline">
+            <div>
+              <span class="map-kicker">CAMPUS OVERVIEW</span>
+              <h2 id="mapHeadline">Tuesday · 2:18 PM</h2>
+            </div>
+            <div class="view-chip"><span></span> 42 synthetic zones updating</div>
+          </div>
+
+          <div class="map-canvas" id="mapCanvas">
+            <svg id="campusMap" viewBox="0 0 1200 760" role="img" aria-labelledby="mapTitle mapDescription">
+              <title id="mapTitle">Simulated CMU campus crowd map</title>
+              <desc id="mapDescription">An isometric campus visualization showing synthetic occupancy levels for campus buildings and outdoor spaces.</desc>
+              <defs>
+                <linearGradient id="mapGround" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#101f31" />
+                  <stop offset="1" stop-color="#08131f" />
+                </linearGradient>
+                <linearGradient id="roadGlow" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#577083" stop-opacity=".2" />
+                  <stop offset=".5" stop-color="#a9c0c7" stop-opacity=".44" />
+                  <stop offset="1" stop-color="#577083" stop-opacity=".16" />
+                </linearGradient>
+                <radialGradient id="vignette">
+                  <stop offset="55%" stop-color="#07111f" stop-opacity="0" />
+                  <stop offset="100%" stop-color="#020810" stop-opacity=".76" />
+                </radialGradient>
+                <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="18" />
+                </filter>
+                <filter id="buildingShadow" x="-60%" y="-60%" width="220%" height="240%">
+                  <feDropShadow dx="8" dy="16" stdDeviation="12" flood-color="#000711" flood-opacity=".62" />
+                </filter>
+                <filter id="pinGlow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="6" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <pattern id="gridPattern" width="42" height="42" patternUnits="userSpaceOnUse" patternTransform="skewY(-20)">
+                  <path d="M42 0H0V42" fill="none" stroke="#a7c4d3" stroke-opacity=".035" stroke-width="1" />
+                </pattern>
+              </defs>
+
+              <rect width="1200" height="760" rx="32" fill="url(#mapGround)" />
+              <rect width="1200" height="760" rx="32" fill="url(#gridPattern)" />
+              <g class="terrain">
+                <path class="lawn lawn-one" d="M96 160 456 30l242 96-352 143Z" />
+                <path class="lawn lawn-two" d="m456 420 368-139 285 103-363 162Z" />
+                <path class="lawn lawn-three" d="m79 507 306-118 258 111-315 147Z" />
+                <path class="campus-path main-path" d="M-20 384C220 309 328 369 505 328S826 139 1228 104" />
+                <path class="campus-path" d="M121 693C294 561 462 557 617 481s291-152 514-134" />
+                <path class="campus-path minor" d="M300 16c56 173 154 269 309 340s252 144 328 390" />
+                <path class="campus-path minor" d="M95 214c157 24 245 101 301 232s148 199 310 284" />
+                <path class="walk-line" d="M-20 384C220 309 328 369 505 328S826 139 1228 104" />
+                <path class="walk-line" d="M121 693C294 561 462 557 617 481s291-152 514-134" />
+              </g>
+
+              <g id="zoneHalos"></g>
+              <g id="crowdAgents" aria-hidden="true"></g>
+              <g id="buildingsLayer"></g>
+              <g id="labelsLayer"></g>
+              <g id="rainLayer" aria-hidden="true"></g>
+              <rect width="1200" height="760" rx="32" fill="url(#vignette)" pointer-events="none" />
+            </svg>
+
+            <div class="compass" aria-label="Map compass"><span>N</span><i></i></div>
+
+            <div class="map-legend glass-panel" aria-label="Crowd level legend">
+              <div><span>CROWD LEVEL</span><strong>Low</strong></div>
+              <div class="legend-gradient"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="legend-labels"><span>Quiet</span><span>At capacity</span></div>
+            </div>
+
+            <div class="selected-pin" id="selectedPin" aria-hidden="true">
+              <span class="pin-pulse"></span>
+              <span class="pin-core"></span>
+            </div>
+
+            <article class="place-card glass-panel" id="placeCard" aria-live="polite">
+              <button class="close-card" id="closeCard" type="button" aria-label="Close place details">×</button>
+              <div class="place-heading">
+                <span class="place-symbol" id="placeSymbol">WH</span>
+                <div><span id="placeType">STUDY · ACADEMIC</span><h3 id="placeName">Wean Hall</h3></div>
+              </div>
+              <div class="occupancy-reading">
+                <div><strong id="placeOccupancy">82%</strong><span id="placeStatus">Busy now</span></div>
+                <div class="capacity-ring" id="capacityRing"><span>3</span><small>LEVEL</small></div>
+              </div>
+              <div class="occupancy-track"><span id="occupancyBar"></span></div>
+              <p id="placeInsight">Class change is creating a short peak. Activity is expected to ease in 18 minutes.</p>
+              <div class="card-actions">
+                <button type="button" id="calmerButton">Find calmer nearby</button>
+                <button class="secondary" type="button" id="forecastButton">3h forecast</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <aside class="insight-panel glass-panel">
+          <div class="insight-header">
+            <span class="eyebrow">Live forecast</span>
+            <span class="confidence-chip">88% confidence</span>
+          </div>
+          <h2 id="insightTitle">Campus activity is rising</h2>
+          <p id="insightCopy">Class change begins in 2 minutes. Expect the busiest paths between Wean, Gates, and the Cut.</p>
+
+          <div class="forecast-chart" aria-label="Three hour campus occupancy forecast">
+            <div class="chart-y-labels"><span>100%</span><span>50%</span><span>0%</span></div>
+            <div class="chart-area">
+              <div class="chart-grid"><i></i><i></i><i></i></div>
+              <svg viewBox="0 0 320 150" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#ffb15a" stop-opacity=".42" />
+                    <stop offset="1" stop-color="#ffb15a" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path id="forecastBand" class="forecast-band" d="M0 106 C52 88 75 49 114 45 S171 66 205 55 255 26 320 42 L320 80 C259 69 237 81 199 91 S143 87 109 82 46 117 0 126Z" />
+                <path id="forecastArea" class="forecast-area" d="M0 116 C49 101 75 64 112 61 S171 77 204 70 259 46 320 57 L320 150H0Z" />
+                <path id="forecastLine" class="forecast-line" d="M0 116 C49 101 75 64 112 61 S171 77 204 70 259 46 320 57" />
+                <circle id="forecastPoint" cx="78" cy="63" r="5" />
+              </svg>
+              <div class="chart-now"><span>NOW</span></div>
+              <div class="chart-time"><span>2 PM</span><span>3 PM</span><span>4 PM</span><span>5 PM</span></div>
+            </div>
+          </div>
+
+          <div class="driver-list">
+            <div class="section-heading"><span>What’s driving activity</span></div>
+            <article>
+              <span class="driver-icon class-driver">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z" /></svg>
+              </span>
+              <div><strong>Class change</strong><small>Wave begins at 2:20 PM</small></div><em>+18%</em>
+            </article>
+            <article id="weatherDriver">
+              <span class="driver-icon weather-driver">
+                <svg viewBox="0 0 24 24"><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" /></svg>
+              </span>
+              <div><strong id="weatherDriverTitle">Clear paths</strong><small id="weatherDriverCopy">Outdoor spaces remain active</small></div><em id="weatherDriverMetric">−4%</em>
+            </article>
+          </div>
+
+          <div class="recommendation-card">
+            <span class="spark-icon" aria-hidden="true">✦</span>
+            <div><span>CALMER PICK</span><strong id="recommendationName">Hunt Library · Lower level</strong><p id="recommendationCopy">44% occupied · 5 min walk</p></div>
+            <button type="button" id="showRecommendation" aria-label="Show recommendation on map">→</button>
+          </div>
+        </aside>
+      </section>
+
+      <footer class="simulation-strip glass-panel">
+        <div class="simulation-clock"><span id="clockTime">2:18</span><small>PM · SIMULATED</small></div>
+        <div class="timeline">
+          <div class="timeline-labels"><span>2:00</span><span>2:20 · CLASS CHANGE</span><span>3:00</span></div>
+          <div class="timeline-track"><span class="timeline-progress" id="timelineProgress"></span><button id="timelineHandle" type="button" aria-label="Simulation time: 2:18 PM"></button></div>
+        </div>
+        <div class="update-status"><span></span><div><strong>Model updated</strong><small id="updatedTime">just now</small></div></div>
+      </footer>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
