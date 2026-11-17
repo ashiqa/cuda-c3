@@ -1,9 +1,9 @@
 const LEVELS = [
-  { min: 0, color: "#5bd99c", top: "#386b59", front: "#1b4037", side: "#285147", label: "Quiet" },
-  { min: 35, color: "#b4d86b", top: "#667444", front: "#35452b", side: "#485938", label: "Open" },
-  { min: 55, color: "#ffc15b", top: "#8b7446", front: "#4d3c27", side: "#635138", label: "Active" },
-  { min: 75, color: "#ff8558", top: "#955a45", front: "#573229", side: "#704237", label: "Busy" },
-  { min: 90, color: "#f34f67", top: "#8c3e53", front: "#522535", side: "#693044", label: "At capacity" },
+  { min: 0, color: "#F5F5DC", top: "#d9cfb3", front: "#6b5747", side: "#8c7460", label: "Quiet" },
+  { min: 35, color: "#F4A460", top: "#c98a53", front: "#6f452d", side: "#915d3b", label: "Open" },
+  { min: 55, color: "#D77A46", top: "#b9673d", front: "#683824", side: "#874b30", label: "Active" },
+  { min: 75, color: "#E35336", top: "#a74732", front: "#62281e", side: "#813426", label: "Busy" },
+  { min: 90, color: "#8F321E", top: "#74301f", front: "#411b13", side: "#592419", label: "At capacity" },
 ];
 
 const SCENARIOS = {
@@ -344,7 +344,7 @@ function updatePlaceCard(id) {
   el("placeName").textContent = building.name;
   el("placeOccupancy").textContent = `${occupancy}%`;
   el("placeStatus").textContent = statusFor(occupancy);
-  el("placeStatus").style.color = palette.color;
+  el("placeStatus").style.color = level === 0 ? "#A0522D" : palette.color;
   el("capacityRing").querySelector("span").textContent = level;
   el("capacityRing").style.borderTopColor = palette.color;
   el("capacityRing").style.borderRightColor = palette.color;
