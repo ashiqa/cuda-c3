@@ -1,12 +1,5 @@
-// Demo fixtures are intentionally separate from the map owner's canonical pins.
-export const demoPins = [
-  { id: 'demo-robotics', kind: 'event', name: 'Robotics open studio', buildingId: 'gates', floor: 3, tags: ['robotics', 'technology'], details: 'Meet student builders and explore their robots. Sample event, not a real listing.' },
-  { id: 'demo-hunt-bathroom', kind: 'bathroom', name: 'Hunt Library restroom', buildingId: 'hunt', floor: 2, tags: ['restroom', 'bathroom'], details: 'Sample second-floor destination; location and accessibility are unverified.' },
-  { id: 'demo-wean-printer', kind: 'printer', name: 'Wean colour printer', buildingId: 'wean', floor: 4, tags: ['colour', 'color', 'print'], details: 'Sample colour-printing destination; availability is unverified.' },
-  { id: 'demo-hunt-study', kind: 'study', name: 'Hunt Library study space', buildingId: 'hunt', floor: 2, tags: ['quiet', 'study', 'library'], details: 'A calmer alternative in the synthetic rain scenario.', occupancy: 57 },
-  { id: 'demo-sorrells-study', kind: 'study', name: 'Sorrells Library', buildingId: 'wean', floor: 4, tags: ['study', 'library', 'sorrells'], details: 'Synthetic scenario: study demand rises during rain.', occupancy: 78 },
-  { id: 'demo-cohon-food', kind: 'food', name: 'Cohon Center food stop', buildingId: 'cohon', tags: ['food', 'lunch', 'eat'], details: 'Sample dining destination; opening hours are unverified.' },
-].map(pin => ({ ...pin, dataStatus: 'synthetic' }));
+import { demoPins } from './demo-data.mjs';
+export { demoPins } from './demo-data.mjs';
 
 const buildingNames = { hunt: 'Hunt Library', wean: 'Wean Hall', gates: 'Gates Hillman', cohon: 'Cohon Center', baker: 'Baker Hall', tepper: 'Tepper Quad' };
 const normalize = text => text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();

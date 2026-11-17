@@ -3,6 +3,10 @@
 Serve the repository root with `python3 -m http.server 4173`, then visit `/ai-assist/`.
 No build step, API key, or backend is required. External fonts are optional; system fonts work offline.
 
+The default demo includes 20 synthetic listings in `demo-data.mjs`. See the
+[colors and demo-data README](./README-colors.md) for the warm palette, supporting
+colors, measured contrast ratios, and fixture details.
+
 `node --test ai-assist/assistant.test.mjs` checks the five demo intents, action payloads,
 exact floor matching, provider failures, and canonical-data injection.
 
