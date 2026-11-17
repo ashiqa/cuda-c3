@@ -1,6 +1,6 @@
 # CMU Campus Pulse: 3D Campus Map PRD
 
-*Working name · PRD v0.3 · 6-hour build · Four people, each supported by one Codex agent*
+*Working name · PRD v0.4 · 6-hour build · Four people, each supported by one Codex agent*
 
 ## 1. Vision and one-liner
 
@@ -8,9 +8,9 @@ A gorgeous, real-time 3D map of CMU that answers three questions for any student
 
 The hackathon wow-moment is the combination: a beautiful 3D campus that is *alive* (crowds, food, events), *conversational* (ask the AI anything), and *predictive* (it tells you Sorrells will be full in 20 minutes and routes you to Hunt).
 
-## 2. Decisions and open questions (v0.3)
+## 2. Decisions and open questions (v0.4)
 
-The team has a **6-hour build window**. Use relative time (`T+0` through `T+6`) until the actual start and submission times are confirmed. Anything that needs a fragile external integration is replaced by verified static, seeded, or simulated data.
+The team has a **6-hour build window**. Use relative time (`T+0` through `T+4`) until the actual start and submission times are confirmed. Anything that needs a fragile external integration is replaced by verified static, seeded, or simulated data.
 
 | Topic | Decision |
 | --- | --- |
@@ -20,17 +20,20 @@ The team has a **6-hour build window**. Use relative time (`T+0` through `T+6`) 
 | Event data | Real events copied in by hand. No scraping. |
 | Crowd data | Pure simulation, labelled as simulated in the UI. |
 | Accessibility | In scope: a step-free routing toggle (elevator and ramp flags on the nav graph). |
+| Indoor detail | **Room-level indoor maps are core, not stretch.** The supplied 2D blueprints are the source for floors, rooms, corridors, doors, stairs, and elevators. The demo must support at least one complete room-level floor in each hero building (Wean/Sorrells and Hunt); additional supplied floors are added only after the two hero flows work. |
+| Blueprint accuracy | Blueprint-derived geometry is labelled `Blueprint-derived`. Room names/numbers are shown only when legible in the source or separately verified. Unclear labels remain unnamed; the team must not guess. Blueprints are not claimed to be current, authoritative, accessible, or suitable for emergency use. |
 | Privacy and safety | Low data risk for this prototype: no accounts or real location tracking. Synthetic and verified data must remain distinguishable. |
 | APIs and keys | Free tiers and open-source tools only (Section 9). |
 | Cut | Time slider and night mode (earlier questions 12 and 13), GroupMe, scraping, accounts, extra buildings. |
 
 Still open (the italic default applies until answered):
 
-1. **Rules and submission.** What exactly is submitted at T+6: repo, video, slides, hosted link, or a combination? *Default: public repo, hosted link, and 2-minute video.*
+1. **Rules and submission.** What exactly is submitted at T+4: repo, video, slides, hosted link, or a combination? *Default: public repo, hosted link, and 2-minute video.*
 2. **Human strengths.** Assign the four people to P1 through P4 in Section 10 before the timer starts. Each person operates one Codex agent and reviews every change in their owned folders.
 3. **Pre-work.** Confirm whether accounts, API keys, data collection, and image preparation are allowed before the official build starts. *Default: accounts, roles, and keys only.*
 4. **Runtime LLM.** Which optional free LLM key is available for the in-app assistant? *Default: local deterministic intent parser first; Gemini only if tested.*
 5. **Pitch format.** Is there a live judge demo? *Default: 2-minute live demo plus a locally stored backup video.*
+6. **Blueprint inputs.** What file types, buildings, floors, scale references, and reuse permissions do we have? *Default: manually trace the two demo floors from supplied PNG/PDF/SVG files; do not attempt automatic whole-campus extraction during the 4-hour build.*
 
 Confirmed campus fact: **Sorrells Library is on the fourth floor of Wean Hall.** The two hero buildings are Wean Hall/Sorrells and Hunt Library.
 
@@ -43,7 +46,7 @@ The simplest build that still wows is **one map, one pin type, one simulated wor
 - **One simulated world drives four features.** A single state (time of day, rain on or off, event nearby) feeds the crowd map, the forecast, Calm routing, and evacuation load. Build it once in P4's module; everyone reads it.
 - **The Rain toggle is the wow button.** It darkens the sky, adds rain, shifts crowds indoors, moves the forecast, and changes the recommendation from one switch. If time allows, Open-Meteo can set it from real weather.
 - **The AI operates the map, not just a chat box.** Every answer returns map actions. Show three distinct techniques: structured language intent extraction, occupancy forecasting, and congestion-aware routing. A small "How this works" chip explains each technique without overclaiming synthetic results.
-- **Indoor on a budget.** Two buildings, with floors drawn as simple room blocks from a hand-written schematic file. It proves the idea without accurate blueprints.
+- **Blueprints become explorable 3D floors.** Preprocess each supplied 2D blueprint into a lightweight floor GeoJSON/SVG: room polygons, corridor polygons, doors, stairs, and elevators. On building selection, lift the floor into a shallow 3D cutaway, hide the roof, and make each room searchable and clickable. Manual tracing of the two demo floors is the reliable path; automatic blueprint recognition is optional pre-work, not a runtime dependency.
 - **Reliable demo.** A Tour button replays the demo script automatically from deterministic seeds, and we record a backup video before submitting.
 - **Visual quality is protected work, not leftover polish.** The map must look cinematic by T+1:30. Later features reuse a fixed palette, motion system, glass panels, lighting, and camera choreography instead of introducing ad hoc UI.
 
@@ -137,12 +140,12 @@ So the whole product is **five reusable screens plus one emergency takeover**, a
 
 | Tier | Includes |
 | --- | --- |
-| **Must (done by T+5:00)** | Cinematic 3D campus map; unified pins; simulated crowd layer; Rain scenario; forecast card; alternative-location recommendation; one working route; deterministic Tour mode |
-| **Should** | Assistant that moves the map; Fast versus Calm routing; one polished indoor floor; step-free route where verified graph data exists; rain particles and environmental lighting |
-| **Could** | Second indoor building; event photo gallery; evacuation-planning simulation; live weather from Open-Meteo; share-a-pin link |
-| **Cut** | GroupMe, scraping, accounts, real-time user tracking, operational emergency guidance, night-mode toggle, time slider, full indoor coverage, event submission |
+| **Must (done by T+5:00)** | Cinematic 3D campus map; **room-level cutaway for one complete floor in both Wean/Sorrells and Hunt from supplied blueprints**; room search and selection; unified pins; simulated crowd layer; Rain scenario; forecast card; alternative-location recommendation; one outdoor-to-room route; deterministic Tour mode |
+| **Should** | Assistant that moves the map; Fast versus Calm routing; multi-floor switcher; step-free route where verified graph data exists; rain particles and environmental lighting |
+| **Could** | More blueprint floors/buildings; event photo gallery; evacuation-planning simulation; live weather from Open-Meteo; share-a-pin link |
+| **Cut** | GroupMe, scraping, accounts, real-time user tracking, operational emergency guidance, night-mode toggle, time slider, automatic blueprint recognition, whole-campus room coverage, event submission |
 
-**Success metrics:** the opening flyover looks presentation-ready by T+1:30; the full scripted demo works three consecutive times; the hosted link works on the presentation laptop and a phone; five scripted queries return the right pins and map actions; one route computes in under 1 second; toggling Rain visibly changes the environment, forecast, and recommendation; synthetic data is always labelled; a local backup video exists before submission.
+**Success metrics:** the opening flyover looks presentation-ready by T+1:30; clicking Wean or Hunt enters a room-level cutaway in under 1 second; every visible demo room is backed by blueprint geometry and is selectable; at least one route terminates at a named room; the full scripted demo works three consecutive times; the hosted link works on the presentation laptop and a phone; five scripted queries return the right pins and map actions; one route computes in under 1 second; toggling Rain visibly changes the environment, forecast, and recommendation; synthetic and blueprint-derived data are always labelled; a local backup video exists before submission.
 
 ### 6.1 Visual north star: "CMU after the rain"
 
@@ -164,6 +167,8 @@ The frontend should feel like a premium spatial product, not a dashboard placed 
 - Camera presets are deterministic: Campus Overview, Wean/Sorrells, Hunt, Indoor, and Evacuation Sandbox.
 - The route appears as a raised glowing ribbon with a moving dash or travelling pulse, not a flat default polyline.
 - Crowd intensity should modify building glow and ground halos without hiding labels or pins.
+- Indoor mode uses a dollhouse cutaway: the selected floor becomes a shallow 3D slab, walls rise above room polygons, corridors remain visually open, and the exterior shell fades rather than disappearing abruptly.
+- Room labels must stay horizontal and readable; hide low-priority labels as the camera zooms out rather than allowing overlap.
 
 **Motion requirements**
 
@@ -179,13 +184,16 @@ At T+1:30, take a full-screen screenshot. It passes only if the campus reads as 
 
 ## 7. Feature specs
 
-### F1. 3D map and pins (mapping, food, events, bathrooms, printers)
+### F1. 3D map, blueprint-derived rooms, and pins
 
 - Extruded campus buildings in a distinct style (palette, soft shadows, sky) with smooth fly-to. Layer chips: Food, Events, Bathrooms, Printers, Crowd, Route.
 - One **Pin** type with an icon and colour per kind. Tapping a pin opens a card with name, floor, and details; events and food also show a **photo gallery** (2 to 3 images) and a time ('starts 3:00 PM', 'about 25 min left').
 - Food pins pulse and show a countdown computed from seeded timestamps relative to now, so the demo feels live without GroupMe.
-- Clicking a hero building opens a **floor switcher** that fades the shell and reveals rooms, corridors, and pins on that floor.
-- **Done when:** every pin kind renders, opens a card, and offers 'Navigate here'; the floor switcher works for 2 buildings.
+- Clicking a hero building opens a **floor switcher** that fades the shell and reveals blueprint-derived rooms, corridors, doors, stairs, elevators, and pins.
+- A room is a first-class selectable destination with `buildingId`, `floor`, `roomId`, display name/number when verified, polygon geometry, centroid, nearby doorway node, and `dataStatus: blueprint-derived|verified`.
+- Blueprint preparation pipeline: orient and crop the source; record floor/building and a minimum of two alignment anchors; trace or import room/corridor polygons; mark vertical connectors and doors; validate labels; export optimized GeoJSON; visually overlay the export on the source before accepting it.
+- The app never ships or exposes sensitive annotations from the source blueprints. Only the geometry and labels needed for navigation are exported.
+- **Done when:** every pin kind renders, opens a card, and offers 'Navigate here'; Wean/Sorrells and Hunt each expose at least one complete blueprint-derived floor; rooms can be searched, selected, highlighted, and used as route destinations; a source-overlay QA screenshot shows the traced geometry aligns with each blueprint.
 
 ### F2. AI assistant
 
@@ -195,9 +203,9 @@ At T+1:30, take a full-screen screenshot. It passes only if the campus reads as 
 
 ### F3. Navigation (outdoor, indoor, step-free)
 
-- One graph of outdoor paths, doors, corridors, stairs, and elevators. Edge flags: step-free, indoor. Modes: Fast, Calm (adds a crowd penalty), Step-free.
+- One graph of outdoor paths, building entrances, blueprint-derived corridor/door nodes, stairs, and elevators. Edge flags: step-free, indoor. Modes: Fast, Calm (adds a crowd penalty), Step-free.
 - The route animates as a line that climbs floors, with a step panel ('Take the elevator to floor 3') and an ETA.
-- **Done when:** a route from an outdoor point to a room on a specific floor works; Step-free avoids stairs; Calm differs from Fast when a hotspot exists.
+- **Done when:** a route from an outdoor point follows the corridor graph to the doorway of a selected room on a specific floor; Step-free avoids stairs only where the blueprint and verification data support that claim; Calm differs from Fast when a hotspot exists.
 
 ### F4. Simulated crowd map
 
@@ -322,10 +330,11 @@ Verify in the first 15 minutes: the tile style URL, and the LLM free-tier rate l
 ```
 /src/app, /src/map, /src/ui, /src/contracts      P1
 /public/data/geo (building outlines)             P1
+/public/data/blueprints/source, /tools/blueprints P1
 /src/features/pins, /src/features/assistant      P2
 /api/chat, /public/data/pins.json, /public/img   P2
 /src/features/nav, /src/features/evac            P3
-/public/data/nav, /public/data/indoor            P3
+/public/data/nav, /public/data/indoor             P3
 /src/features/crowd, /src/features/forecast      P4
 /public/data/sim                                 P4
 ```
@@ -333,7 +342,7 @@ Verify in the first 15 minutes: the tile style URL, and the LLM free-tier rate l
 **Shared contracts (TypeScript in `/src/contracts`, frozen at T+0:40; only P1/Agent 1 edits them):**
 
 - `Pin {id, kind: food|event|bathroom|printer|study, name, lng, lat, buildingId?, floor?, details, photos[], startsAt?, expiresAt?, tags[], dataStatus: verified|synthetic}`
-- `Building {id, name, footprint, heightM, hero}` and `IndoorSchematic {buildingId, floors[{level, rooms[{id, name, rect}], nodes, edges}]}`
+- `Building {id, name, footprint, heightM, hero}` and `IndoorFloor {buildingId, level, sourceId, alignmentAnchors[], rooms[{id, name?, number?, polygon, centroid, doorNodeId?, dataStatus}], corridors[], doors[], connectors[]}`
 - `NavNode {id, lng, lat, buildingId?, floor?, kind}` and `NavEdge {from, to, lengthM, stepFree, indoor}`
 - `SimState {minuteOfDay, rain, eventNearby}` and `CrowdZone {id, name, lng, lat, capacity, occupancy, level 0-4}`
 - `Forecast {zoneId, minutes[], p10[], p50[], p90[], timeToCapacityMin?, drivers[]}`
@@ -352,17 +361,17 @@ Each human owns one workstream and operates one Codex agent. The human is respon
 
 ### P1 + Codex Agent 1: Visual system, 3D map, and integration
 
-**Owns:** `/src/app`, `/src/map`, `/src/ui`, `/src/contracts`, `/public/data/geo`
+**Owns:** `/src/app`, `/src/map`, `/src/ui`, `/src/contracts`, `/public/data/geo`, `/public/data/blueprints/source`, `/tools/blueprints`
 
 - **T+0:00 to T+0:30:** Scaffold Vite + React + TypeScript, freeze contracts, create module stubs, and deploy the empty shell.
-- **T+0:30 to T+1:30:** Build the cinematic MapLibre scene: extruded CMU buildings, palette, fog/sky, labels, lighting, hero-building highlights, responsive glass UI, and the opening camera flyover.
+- **T+0:30 to T+1:30:** Build the cinematic MapLibre scene and the reusable indoor cutaway renderer: extruded CMU buildings, palette, fog/sky, labels, lighting, hero-building highlights, responsive glass UI, and the opening camera flyover.
 - **T+1:30 visual gate:** capture the thumbnail screenshot and fix visual issues before adding more UI.
 - **T+1:30 to T+2:15:** Add layer registry, typed map-action executor, camera presets, layer chips, Rain and Tour controls.
 - **T+2:15 to T+4:15:** Integrate P2, P3, and P4 continuously; do not wait for all modules to finish.
 - **T+4:15 to T+5:00:** Implement deterministic Tour mode and fix end-to-end blockers.
 - **T+5:00 to T+6:00:** Own visual polish, final deployment, README, screenshots, recording, and submission.
 
-**Done when:** the map looks unmistakably 3D at first glance, the demo works without opening developer tools, and every other module can drive it through typed actions.
+**Done when:** the map looks unmistakably 3D at first glance, either hero building can transition cleanly into a room-level cutaway, the demo works without developer tools, and every other module can drive it through typed actions.
 
 ### P2 + Codex Agent 2: Pins, campus discovery, and assistant
 
@@ -377,18 +386,18 @@ Each human owns one workstream and operates one Codex agent. The human is respon
 
 **Done when:** the five demo queries work with the runtime LLM disabled and each result produces a correct map action.
 
-### P3 + Codex Agent 3: Routing and spatial logic
+### P3 + Codex Agent 3: Blueprint conversion, routing, and spatial logic
 
 **Owns:** `/src/features/nav`, `/public/data/nav`, `/public/data/indoor`; stretch ownership: `/src/features/evac`
 
-- **T+0:00 to T+0:45:** Build the minimal outdoor graph connecting the demo locations and doors.
-- **T+0:45 to T+1:30:** Implement and test A* Fast routing; return geometry, ETA, and instructions using the frozen contract.
+- **T+0:00 to T+0:45:** With P1's schema, convert/trace one complete demo floor for Wean/Sorrells and one for Hunt from the supplied blueprints; mark rooms, corridors, doors, stairs, and elevators, and retain source-alignment metadata.
+- **T+0:45 to T+1:30:** Build the minimal outdoor graph and connect entrances to the blueprint-derived indoor graphs. Implement and test A* Fast routing; return geometry, ETA, and instructions using the frozen contract.
 - **T+1:30 to T+2:30:** Add crowd-weighted Calm routing and the raised glowing route visualization hook.
-- **T+2:30 to T+3:30:** Add one polished indoor floor and connect it to the outdoor graph. Add Step-free only where elevator/ramp data is represented.
+- **T+2:30 to T+3:30:** Polish the two required indoor floors, room highlighting, floor transition, and outdoor-to-room connection. Add Step-free only where elevator/ramp data is represented and verified.
 - **T+3:30 to T+4:30:** Build Route Preview and a lightweight route-follow presentation. Do not implement real location tracking.
 - **T+4:30 onward, stretch only:** evacuation-planning sandbox with simulated occupants and a clear non-operational disclaimer.
 
-**Done when:** Fast and Calm visibly differ in the rain scenario, one route reaches a specific destination, and no route relies on invented accessibility claims.
+**Done when:** Fast and Calm visibly differ in the rain scenario, one route reaches a specific blueprint-derived room doorway, both hero floors pass source-overlay QA, and no route relies on invented accessibility claims.
 
 ### P4 + Codex Agent 4: Crowd simulation, forecast, and recommendation
 
@@ -430,12 +439,12 @@ Rules:
 | Relative time | Milestone |
 | --- | --- |
 | T+0:00 to T+0:15 | Assign P1–P4, confirm submission format, run the app, and open one shared blocker list |
-| T+0:15 to T+0:40 | Freeze contracts; every workstream returns a contract-valid stub |
+| T+0:15 to T+0:40 | Freeze contracts; inspect blueprint formats/permissions; choose the two demo floors; every workstream returns a contract-valid stub |
 | T+0:40 to T+1:30 | Parallel build; P1 completes the cinematic 3D visual foundation |
 | T+1:30 | Visual gate: screenshot review; map must already look judge-ready |
-| T+1:30 to T+3:00 | Pins, routing, crowd model, forecast, and map actions built against stubs |
+| T+1:30 to T+3:00 | Two blueprint-derived room floors, pins, routing, crowd model, forecast, and map actions built against stubs |
 | T+3:00 | First integrated path: open map → select Sorrells → show forecast → recommend Hunt |
-| T+3:00 to T+4:15 | Add assistant, Calm route, one indoor floor, transitions, and mobile layout |
+| T+3:00 to T+4:15 | Add assistant, Calm route, outdoor-to-room navigation, indoor cutaway transitions, and mobile layout |
 | T+4:15 | Full two-minute demo run; cut anything that blocks it |
 | T+4:15 to T+5:00 | Tour mode, deterministic seed, bug fixes, performance pass, rehearsal |
 | T+5:00 | Feature freeze |
@@ -447,7 +456,7 @@ Rules:
 
 1. **Open (15s):** automatic flyover of the 3D campus with the crowd layer breathing.
 2. **Pins (30s):** tap a pulsing food pin ('free pizza, about 20 min left'), then an event pin and swipe its photos.
-3. **AI (30s):** ask 'anything interesting related to robotics today?' and 'closest bathroom to Hunt 2nd floor?'; the map reacts, then draw the route through the building with Step-free on.
+3. **AI + rooms (30s):** ask 'anything interesting related to robotics today?' and 'closest bathroom to Hunt 2nd floor?'; the map reacts, removes the Hunt roof, reveals the blueprint-derived rooms, highlights the destination, and draws the route along the indoor corridor. Turn Step-free on only if the represented connectors have been verified.
 4. **Predict (30s):** pin Sorrells and switch Rain on. In one coordinated transition the sky darkens, rain appears, Wean glows warmer, the forecast rises, and Hunt becomes the recommended alternative.
 5. **Route (10s):** accept Hunt; show the glowing Calm route bend around the simulated hotspot.
 6. **Close (5s):** structured language intent, scenario forecasting, and congestion-aware routing. If the evacuation sandbox is complete, mention it after the primary demo rather than risking the core two-minute flow.
@@ -456,8 +465,8 @@ Rules:
 
 - **Free LLM rate limits or outage:** keyword-search fallback in P2-04, and the Tour mode needs no LLM.
 - **Free tile service down:** switch to the tested fallback style; verify both at T+0:15 and T+5:00.
-- **Indoor data eats time:** stop after one polished floor at T+3:30; never sacrifice the core outdoor demo.
+- **Blueprint conversion eats time:** limit the must-have to one complete floor in each hero building; trace only navigation-relevant geometry, simplify polygons, and omit unreadable room labels. Cut additional floors before weakening the two required room-level flows.
 - **Late integration:** stubs by T+0:40, first core end-to-end path by T+3:00, full demo by T+4:15.
 - **3D performance:** simplified geometry; test on the demo laptop early.
 - **Judges mistake simulation for real data:** keep the 'simulated' badges and say so in the pitch.
-- **If we fall behind, cut in this order:** evacuation sandbox, second indoor building, event photo gallery, runtime LLM, route-follow mode, step-free polish. Preserve the 3D map, Rain transformation, forecast, recommendation, Calm route, and Tour mode because they are the judging story.
+- **If we fall behind, cut in this order:** evacuation sandbox, extra floors beyond the two required demo floors, event photo gallery, runtime LLM, route-follow mode, step-free polish. Preserve the 3D campus, the two room-level hero floors, room search, one outdoor-to-room route, Rain transformation, forecast, recommendation, Calm route, and Tour mode because they are the judging story.
