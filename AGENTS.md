@@ -37,6 +37,6 @@ Fill this in at kickoff so every agent knows whose files are whose.
 |---|---|---|
 |  3D map and pins | @ashiqa | /3d-map |
 |  AI assistant | @noveenf | /ai-assist |
-|  Navigation | @ashiqa | /nav |
+|  Navigation | @adimohekar | /nav |
 |  Simulated crowd map | @ashiqa | /crowd-map |
 
