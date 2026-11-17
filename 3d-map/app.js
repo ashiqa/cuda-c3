@@ -15,6 +15,11 @@ const ICONS = {
   printer: "▣",
 };
 
+const PHOTO_ASSETS = {
+  food: "./assets/free-food-pin.jpg",
+  event: "./assets/student-event-pin.jpg",
+};
+
 const state = {
   visibleLayers: new Set(["food", "event", "bathroom", "printer"]),
   crowdVisible: true,
@@ -122,8 +127,8 @@ function renderBuildings() {
         class: "building-side",
         points: polygonString([point, geometry.base[next], geometry.top[next], geometry.top[edgeIndex]]),
       });
-      const edgeShade = 15 + Math.round((edgeIndex / geometry.base.length) * 11);
-      side.style.fill = `hsl(196 24% ${edgeShade}%)`;
+      const edgeShade = 19 + Math.round((edgeIndex / geometry.base.length) * 10);
+      side.style.fill = `hsl(20 38% ${edgeShade}%)`;
       group.appendChild(side);
     });
 
@@ -191,23 +196,48 @@ function renderPins() {
   pins.forEach((pin, index) => {
     const [x, y] = pinPosition(pin);
     const color = COLORS[pin.kind];
+    const hasPhoto = Boolean(PHOTO_ASSETS[pin.kind]);
     const group = svg("g", {
       id: `pin-${pin.id}`,
-      class: "pin",
+      class: `pin${hasPhoto ? " photo-pin" : ""}`,
       role: "button",
       tabindex: "0",
       transform: `translate(${x} ${y})`,
       style: `animation-delay:${220 + index * 70}ms`,
       "aria-label": `${pin.name}, ${pin.kind}, ${pinSubtitle(pin)}, Demo data`,
     });
-    group.appendChild(svg("line", { class: "pin-stem", x1: 0, y1: 0, x2: 0, y2: 23 }));
-    group.appendChild(svg("circle", { class: "pin-ring", cx: 0, cy: 0, r: 14, fill: color }));
-    const icon = svg("text", { class: "pin-core", x: 0, y: 1 });
-    icon.textContent = ICONS[pin.kind];
-    group.appendChild(icon);
+    group.appendChild(svg("line", { class: "pin-stem", x1: 0, y1: 0, x2: 0, y2: hasPhoto ? 31 : 23 }));
+    if (hasPhoto) {
+      const clipId = `photo-clip-${pin.id}`;
+      const clip = svg("clipPath", { id: clipId });
+      clip.appendChild(svg("circle", { cx: 0, cy: 0, r: 22 }));
+      document.querySelector("#campusMap defs").appendChild(clip);
+      group.appendChild(svg("circle", { class: "pin-photo-pulse", cx: 0, cy: 0, r: 29, fill: color }));
+      group.appendChild(svg("circle", { class: "pin-photo-frame", cx: 0, cy: 0, r: 25, fill: color }));
+      group.appendChild(svg("image", {
+        class: "pin-photo-image",
+        href: PHOTO_ASSETS[pin.kind],
+        x: -22,
+        y: -22,
+        width: 44,
+        height: 44,
+        preserveAspectRatio: "xMidYMid slice",
+        "clip-path": `url(#${clipId})`,
+      }));
+      group.appendChild(svg("circle", { class: "pin-photo-badge", cx: 19, cy: 17, r: 9, fill: color }));
+      const badge = svg("text", { class: "pin-photo-badge-icon", x: 19, y: 18 });
+      badge.textContent = ICONS[pin.kind];
+      group.appendChild(badge);
+    } else {
+      group.appendChild(svg("circle", { class: "pin-ring", cx: 0, cy: 0, r: 14, fill: color }));
+      const icon = svg("text", { class: "pin-core", x: 0, y: 1 });
+      icon.textContent = ICONS[pin.kind];
+      group.appendChild(icon);
+    }
 
     const labelWidth = Math.max(84, Math.min(132, pin.name.length * 5.4));
-    const [labelX, labelY] = pinLabelOffset(pin.id);
+    const [labelX, baseLabelY] = pinLabelOffset(pin.id);
+    const labelY = baseLabelY - (hasPhoto ? 17 : 0);
     const label = svg("g", { class: "pin-label", transform: `translate(${labelX} ${labelY})` });
     label.appendChild(svg("rect", { x: -labelWidth / 2, y: -16, width: labelWidth, height: 30, rx: 8 }));
     const title = svg("text", { x: 0, y: -4 });

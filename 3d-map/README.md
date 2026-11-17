@@ -8,6 +8,11 @@ python3 -m http.server 4173 --bind 127.0.0.1
 
 The feature has no package dependencies. Building footprints are a small local subset derived from OpenStreetMap and are attributed in the interface. Seeded pins and indoor preview geometry are visibly labelled as demo data.
 
+The interface reuses the accessible warm tokens documented in
+`ai-assist/README-colors.md`. Food and event markers use local generated photography
+from `assets/free-food-pin.jpg` and `assets/student-event-pin.jpg`; no runtime image
+service is required.
+
 ## Navigation integration
 
 Selecting **Navigate here** dispatches a browser event:
