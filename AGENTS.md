@@ -36,7 +36,7 @@ Fill this in at kickoff so every agent knows whose files are whose.
 | Area | Owner (GitHub login) | Folders |
 |---|---|---|
 |  3D map and pins | @adimohekar | /3d-map |
-|  AI assistant | @ashiqa | /ai-assist |
+|  AI assistant | @noveenf | /ai-assist |
 |  Navigation | @abeeraf | /nav |
 |  Simulated crowd map | @ashiqa | /crowd-map |
 
