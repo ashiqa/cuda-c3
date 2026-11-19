@@ -1,6 +1,8 @@
+
+
 # CMU Campus Pulse: 3D Campus Map PRD
 
-*Working name · PRD v0.4 · 6-hour build · Four people, each supported by one Codex agent*
+Watch demo here - https://drive.google.com/file/d/1lLlYm-kDcpcW9mD7H970-WJEYqlefdZ9/view?usp=sharing
 
 ## 1. Vision and one-liner
 
